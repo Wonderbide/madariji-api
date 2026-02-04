@@ -1,0 +1,80 @@
+HELP.md
+target/
+uploads/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Environment Files ###
+backend-supabase-config.env
+*.env.local
+*.env.development
+*.env.production
+
+### Security - NEVER commit these ###
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.crt
+credentials/
+gcp-credentials.json
+*-credentials.json
+
+### Application specific ###
+application-prod.properties
+application-prod.yml
+application-local.properties
+
+### Local Storage ###
+local/
+
+### Application Logs ###
+app-debug*.log
+app*.log
+*.log
+
+### Test Reports ###
+test-report-*.json
+
+### Temporary SQL Scripts ###
+check_active_prompts.sql
+execute_prompt_migration.sh
+
+### Backup Files ###
+*.backup
+*.bak
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride

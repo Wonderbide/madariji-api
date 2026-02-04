@@ -1,0 +1,3 @@
+-- File kept empty for backward compatibility
+-- The word_count_statistics table has been removed
+-- See drop_quality_report_table.sql for cleanup

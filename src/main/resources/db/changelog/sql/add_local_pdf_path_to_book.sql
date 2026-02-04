@@ -1,0 +1,1 @@
+ALTER TABLE book ADD COLUMN local_pdf_path VARCHAR(255);

@@ -1,0 +1,32 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+*.iml
+.vscode
+
+# Build artifacts
+target/
+!target/*.jar
+
+# Local files
+uploads/
+final-results/
+covers/
+local/
+
+# Docs
+*.md
+docs/
+
+# Environment
+.env
+.env.*
+
+# Credentials
+credentials/
+*.json
+*.pem
+*.key

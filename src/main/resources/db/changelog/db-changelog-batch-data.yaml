@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-initial-batch-data
+      author: omar
+      changes:
+        - sqlFile:
+            path: sql/insert_initial_batch_data.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sql: |
+            DELETE FROM batch_prompt WHERE name = 'PAGE_STRUCTURING_V5';
+            DELETE FROM batch_model_llm WHERE model_code IN ('gpt-4o', 'gpt-4o-mini', 'gemini-2.0-flash-exp');

@@ -1,0 +1,766 @@
+# src/main/resources/db/changelog/db.changelog-master.yaml
+databaseChangeLog:
+  - changeSet:
+      id: '1' # C'est le premier et unique changeset de votre nouvelle baseline
+      author: omar # Votre nom
+      comment: "Baseline schema V1.0 - Defines the complete initial schema"
+      validCheckSum: ANY
+      changes:
+        - sqlFile:
+            path: sql/schema_v1.sql # Chemin relatif au fichier changelog principal
+            relativeToChangelogFile: true # Important pour que Liquibase trouve le fichier SQL
+            stripComments: true
+            splitStatements: true # Par défaut true, sépare les instructions SQL par ;
+            endDelimiter: ";"
+
+    # AJOUTER LE NOUVEAU CHANGESET CI-DESSOUS
+  - changeSet:
+        id: '2' # Nouvel ID unique pour ce changeset
+        author: TakrarDev # Votre nom/pseudo
+        comment: "Create user_settings table for user display preferences"
+        preConditions:
+          onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: user_settings
+        changes:
+            - createTable:
+                  tableName: user_settings
+                  columns:
+                      - column:
+                            name: id
+                            type: uuid # Conforme à votre schéma existant
+                            constraints:
+                                primaryKey: true
+                                nullable: false
+                            defaultValueComputed: "gen_random_uuid()"
+
+                      - column:
+                            name: user_id
+                            type: uuid # Conforme
+                            constraints:
+                                nullable: false
+                                unique: true
+                                foreignKeyName: fk_usersettings_users # Nom de FK cohérent
+                                references: users(id) # Référence la table users
+                      - column:
+                            name: reading_theme
+                            type: VARCHAR(50) # Taille cohérente avec d'autres enums
+                            defaultValue: "LIGHT" # Valeur par défaut en BDD
+                            constraints:
+                                nullable: false
+                      # --- FUTURS PARAMETRES ---
+                      # Exemple pour la police :
+                      # - column:
+                      #     name: book_content_font_family
+                      #     type: VARCHAR(100) # Assez pour les noms de police
+                      #     defaultValue: "Noto Naskh Arabic"
+                      #     constraints:
+                      #       nullable: false
+                      # - column:
+                      #     name: book_content_font_size
+                      #     type: INTEGER
+                      #     defaultValueNumeric: 3 # Pour les types numériques
+                      #     constraints:
+                      #       nullable: false
+  
+# DISABLED: Empty SQL file - tables created via Hibernate ddl-auto
+#  - changeSet:
+#      id: '3'
+#      author: Claude
+#      comment: "Create user_word_list and user_word_list_item tables for personal word lists"
+#      changes:
+#        - sqlFile:
+#            path: sql/user_word_list_tables.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+# DISABLED: Empty SQL file - tables created via Hibernate ddl-auto
+#  - changeSet:
+#      id: '4'
+#      author: Claude
+#      comment: "Add language_code to user_word_list for multi-language support"
+#      changes:
+#        - sqlFile:
+#            path: sql/add_language_to_word_list.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+# Migration temporairement désactivée car colonnes déjà présentes
+#  - changeSet:
+#      id: '5'
+#      author: Claude
+#      comment: "Add progress tracking columns to book table for batch processing"
+#      changes:
+#        - sqlFile:
+#            path: sql/add_book_progress_tracking.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+# Migration temporairement désactivée car la colonne book_id existe déjà
+#  - changeSet:
+#      id: '5'
+#      author: Claude
+#      comment: "Add optional book_id to user_word_list for book-specific word lists"
+#      changes:
+#        - sqlFile:
+#            path: sql/add_book_id_to_word_list.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+# DISABLED: Empty SQL file - tables created via Hibernate ddl-auto
+#  - changeSet:
+#      id: '6'
+#      author: Claude
+#      comment: "Create quiz system tables for UserQuizConfiguration and UserWordLearningState"
+#      changes:
+#        - sqlFile:
+#            path: sql/quiz_system_tables.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+# DISABLED: Empty SQL file - tables created via Hibernate ddl-auto
+#  - changeSet:
+#      id: '7'
+#      author: Claude
+#      comment: "Add Anki SRS enhancement fields to user_word_learning_state table"
+#      changes:
+#        - sqlFile:
+#            path: sql/anki_srs_enhancement.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+            
+  - changeSet:
+      id: '8'
+      author: Claude
+      comment: "Create prompt management tables for dynamic prompt configuration and usage tracking"
+      changes:
+        - sqlFile:
+            path: sql/prompt_management_tables.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: prompt_template
+            
+# DISABLED: Empty SQL file
+#  - changeSet:
+#      id: '9'
+#      author: Claude
+#      comment: "Fix model_configuration table structure and add initial data"
+#      changes:
+#        - sqlFile:
+#            path: sql/fix_model_configuration.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+  - changeSet:
+      id: '10'
+      author: Claude
+      comment: "Add versioning and A/B testing support to prompt management system"
+      changes:
+        - sqlFile:
+            path: sql/add_prompt_versioning_columns.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+# DISABLED: Empty SQL file
+#  - changeSet:
+#      id: '11'
+#      author: Claude
+#      comment: "Add missing model configurations (gemini-2.0-flash-exp, gpt-4-turbo-preview)"
+#      changes:
+#        - sqlFile:
+#            path: sql/add_missing_model_configurations.sql
+#            relativeToChangelogFile: true
+            
+  - changeSet:
+      id: '12'
+      author: Batch Processing Module
+      comment: "Add vision_operation_name column to batch_book table"
+      preConditions:
+        onFail: MARK_RAN
+        tableExists:
+          tableName: batch_book
+      changes:
+        - sqlFile:
+            path: sql/add_vision_operation_name.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+# DISABLED: Empty SQL file + duplicate ID '12'
+#  - changeSet:
+#      id: '12'
+#      author: Claude
+#      comment: "Add complete AI model catalog (Gemini 2.0/2.5, GPT-4o, etc.)"
+#      changes:
+#        - sqlFile:
+#            path: sql/add_complete_model_catalog.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+# DISABLED: Empty SQL file
+#  - changeSet:
+#      id: '13'
+#      author: Claude
+#      comment: "Create AI flow configuration table for dynamic model assignment"
+#      preConditions:
+#        onFail: MARK_RAN
+#        not:
+#          tableExists:
+#            tableName: ai_flow_configuration
+#      changes:
+#        - sqlFile:
+#            path: sql/create_ai_flow_configuration.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+  - changeSet:
+      id: '14'
+      author: Claude
+      comment: "Create word count statistics table for storing word count data per page"
+      validCheckSum: ANY
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: word_count_statistics
+      changes:
+        - sqlFile:
+            path: sql/word_count_statistics.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '15'
+      author: Claude
+      comment: "Drop quality_report and word_count_statistics tables"
+      validCheckSum: ANY
+      changes:
+        - sqlFile:
+            path: sql/drop_quality_report_table.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '16'
+      author: Claude
+      comment: "Add role column to users table for role-based access control"
+      validCheckSum: ANY
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: users
+            columnName: role
+      changes:
+        - sqlFile:
+            path: sql/V14__add_user_role_column.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '16-supabase'
+      author: Claude
+      comment: "Add supabase_user_id column to users table for Supabase authentication"
+      validCheckSum: ANY
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: users
+            columnName: supabase_user_id
+      changes:
+        - sqlFile:
+            path: sql/add_supabase_user_id_to_users.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '17'
+      author: Claude
+      comment: "Change supabase_user_id column type from UUID to VARCHAR(255)"
+      changes:
+        - sqlFile:
+            path: sql/alter_supabase_user_id_type.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '18'
+      author: Claude
+      comment: "Remove external auth provider columns (auth0_user_id, supabase_user_id) for hexagonal architecture"
+      changes:
+        - sqlFile:
+            path: sql/remove_external_auth_columns.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+# DISABLED: Inserts into wrong table (prompt_template instead of prompt_library)
+#  - changeSet:
+#      id: '19'
+#      author: Claude
+#      comment: "Update Word Analysis prompt to use dynamic language parameter instead of hardcoded language conditions"
+#      changes:
+#        - sqlFile:
+#            path: sql/update_word_analysis_prompt_dynamic_language.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+  - changeSet:
+      id: '20'
+      author: Claude
+      comment: "Add GPT-4o and GPT-4o-mini model configurations"
+      changes:
+        - sqlFile:
+            path: sql/add_gpt4o_model_configuration.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '21'
+      author: Claude
+      comment: "Drop unused prompt tracking tables (prompt_ab_test and prompt_usage_log)"
+      changes:
+        - sqlFile:
+            path: sql/drop_prompt_tracking_tables.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '22'
+      author: Claude
+      comment: "Final cleanup - ensure quality_report and word_count_statistics tables are completely removed"
+      changes:
+        - sqlFile:
+            path: sql/final_cleanup_quality_report.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '23'
+      author: Claude
+      comment: "Drop all quiz-related tables (user_quiz_configuration, user_word_learning_state, etc.)"
+      changes:
+        - sqlFile:
+            path: sql/drop_quiz_tables.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '24'
+      author: Claude
+      comment: "Rename prompt_template and model_configuration tables with ai_ prefix"
+      changes:
+        - sqlFile:
+            path: sql/rename_tables_with_ai_prefix.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '25'
+      author: Claude
+      comment: "Drop unused default_model column from ai_prompt_template"
+      changes:
+        - sqlFile:
+            path: sql/drop_default_model_column.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '26'
+      author: Claude
+      comment: "Drop non-essential columns from ai_prompt_template (name, description, input_schema, output_schema)"
+      changes:
+        - sqlFile:
+            path: sql/drop_non_essential_prompt_columns.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+# DISABLED: Inserts into wrong table (ai_prompt_template instead of prompt_library)
+#  - changeSet:
+#      id: '27'
+#      author: Claude
+#      comment: "Insert initial prompts into database"
+#      changes:
+#        - sqlFile:
+#            path: sql/001_insert_initial_prompts.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+  - changeSet:
+      id: '28'
+      author: Claude
+      comment: "Migrate to new AI configuration architecture (prompt_library, llm_models, ai_workflow_config)"
+      changes:
+        - sqlFile:
+            path: sql/002_migrate_to_new_architecture.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '29'
+      author: Claude
+      comment: "Fix ai_workflow_config to use model_code instead of UUID"
+      changes:
+        - sqlFile:
+            path: sql/004_fix_workflow_model_ids.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '30'
+      author: Claude
+      comment: "Fix provider-model mismatches in ai_workflow_config"
+      changes:
+        - sqlFile:
+            path: sql/005_fix_workflow_provider_model_mismatch.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '31'
+      author: Claude
+      comment: "Change model_id from UUID to VARCHAR in ai_workflow_config"
+      changes:
+        - sqlFile:
+            path: sql/010_change_model_id_to_varchar.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '32'
+      author: BatchModule
+      comment: "Create batch_book table for isolated batch processing system"
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: batch_book
+      changes:
+        - sqlFile:
+            path: sql/create_batch_book_table.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '33'
+      author: Omar
+      comment: "Make local_pdf_path nullable as PDFs are now stored only in R2"
+      changes:
+        - sqlFile:
+            path: migrations/2025-08-22-make-local-pdf-path-nullable.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+# DISABLED: Batch processor tables removed - duplicated prompt_library functionality
+#  - changeSet:
+#      id: '34'
+#      author: BatchProcessor
+#      comment: "Create independent tables for batch processor (batch_prompt and batch_model_llm)"
+#      changes:
+#        - sqlFile:
+#            path: sql/create_batch_processor_tables.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+# DISABLED: Batch processor tables removed
+#  - changeSet:
+#      id: '35'
+#      author: BatchProcessor
+#      comment: "Insert initial data for batch processor tables (prompt and model configurations)"
+#      changes:
+#        - sqlFile:
+#            path: sql/insert_initial_batch_data.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+# DISABLED: Batch processor tables removed
+#  - changeSet:
+#      id: '36'
+#      author: BatchProcessor
+#      comment: "Clean up non-essential columns from batch processor tables"
+#      changes:
+#        - sqlFile:
+#            path: sql/batch_processor_cleanup.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+# DISABLED: Batch processor tables removed
+#  - changeSet:
+#      id: '37'
+#      author: BatchProcessor
+#      comment: "Rename columns to make batch processor provider-agnostic"
+#      changes:
+#        - sqlFile:
+#            path: sql/batch_processor_renaming.sql
+#            relativeToChangelogFile: true
+#            stripComments: true
+#            splitStatements: true
+#            endDelimiter: ";"
+
+  - changeSet:
+      id: '38'
+      author: Gemini
+      comment: "Add last_successfully_processed_page_index to book table"
+      changes:
+        - sqlFile:
+            path: sql/add_last_successfully_processed_page_index_to_book.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '39'
+      author: Gemini
+      comment: "Add local_pdf_path to book table"
+      changes:
+        - sqlFile:
+            path: sql/add_local_pdf_path_to_book.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '40'
+      author: Gemini
+      comment: "Add processing_details to book table"
+      changes:
+        - sqlFile:
+            path: sql/add_processing_details_to_book.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '41'
+      author: Gemini
+      comment: "Catch-up missing columns in book table"
+      changes:
+        - sqlFile:
+            path: sql/catchup_missing_columns.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '42'
+      author: Gemini
+      comment: "Add vision_operation_name to book table"
+      changes:
+        - sqlFile:
+            path: sql/add_vision_operation_name_to_book.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '43'
+      author: Simplification
+      comment: "Make local_pdf_path nullable - PDF now stored in R2 only"
+      changes:
+        - sqlFile:
+            path: sql/make_local_pdf_path_nullable.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '44'
+      author: Cleanup
+      comment: "Drop local_pdf_path column - no longer used"
+      changes:
+        - sqlFile:
+            path: sql/drop_local_pdf_path_column.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '45'
+      author: Simplification
+      comment: "Consolidate prompt system - ensure required prompts exist and drop batch tables"
+      changes:
+        - sqlFile:
+            path: sql/consolidate_prompts.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '46'
+      author: Omar
+      comment: "Update Word Analysis prompt v4.0 with proper Arabic linguistic fields (jidar, triliteral root, masdar, wazn)"
+      changes:
+        - sqlFile:
+            path: sql/update_word_analysis_prompt_v4_linguistic.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '47'
+      author: Omar
+      comment: "Create book_metadata_translation table for multi-language book metadata"
+      changes:
+        - sqlFile:
+            path: sql/create_book_metadata_translation.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '48'
+      author: Omar
+      comment: "Add author column to book_metadata_translation for transliterated author names"
+      changes:
+        - sqlFile:
+            path: sql/alter_book_metadata_translation_add_author.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '49'
+      author: Omar
+      comment: "Drop orphaned batch_book table - no entity or repository exists"
+      changes:
+        - sqlFile:
+            path: sql/drop_batch_book_table.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '50'
+      author: Omar
+      comment: "Add book metadata context (genre, author, description) to Word Analysis prompt"
+      changes:
+        - sqlFile:
+            path: sql/update_word_analysis_prompt_with_book_metadata.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '51'
+      author: Omar
+      comment: "Word Analysis prompt V5 - enhanced classical Arabic terminology interpretation"
+      changes:
+        - sqlFile:
+            path: sql/insert_word_analysis_prompt_v5.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '52'
+      author: Omar
+      comment: "Create user_daily_quota table for freemium rate limiting"
+      changes:
+        - sqlFile:
+            path: sql/create_user_daily_quota_table.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"
+
+  - changeSet:
+      id: '53'
+      author: Omar
+      comment: "Add Stripe subscription management fields to users table"
+      changes:
+        - sqlFile:
+            path: sql/add_stripe_fields_to_users.sql
+            relativeToChangelogFile: true
+            stripComments: true
+            splitStatements: true
+            endDelimiter: ";"

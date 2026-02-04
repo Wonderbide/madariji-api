@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- JSON Console Appender for production (to be shipped to Logtail) -->
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"app":"backcover","environment":"${SPRING_PROFILES_ACTIVE:-default}"}</customFields>
+            <includeContext>false</includeContext>
+            <includeCallerData>true</includeCallerData>
+            <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampPattern>
+            <timeZone>UTC</timeZone>
+        </encoder>
+    </appender>
+    
+    <!-- Logtail HTTP Appender -->
+    <appender name="LOGTAIL_HTTP" class="com.backcover.config.LogtailHttpAppender">
+        <sourceToken>${LOGTAIL_SOURCE_TOKEN}</sourceToken>
+        <endpointUrl>https://s1390626.eu-nbg-2.betterstackdata.com/</endpointUrl>
+    </appender>
+    
+    <!-- Async wrapper for better performance -->
+    <appender name="ASYNC_JSON" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="JSON_CONSOLE"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <!-- Sentry Appender for error monitoring -->
+    <appender name="SENTRY" class="io.sentry.logback.SentryAppender">
+        <minimumEventLevel>ERROR</minimumEventLevel>
+        <minimumBreadcrumbLevel>WARN</minimumBreadcrumbLevel>
+    </appender>
+    
+    <!-- Logger configuration -->
+    <logger name="com.backcover" level="INFO"/>
+    <logger name="org.springframework.security" level="WARN"/>
+    <logger name="org.springframework.web.client.RestTemplate" level="WARN"/>
+    
+    <!-- Profile-based configuration -->
+    <springProfile name="production">
+        <root level="INFO">
+            <appender-ref ref="ASYNC_JSON"/>
+            <appender-ref ref="LOGTAIL_HTTP"/>
+            <appender-ref ref="SENTRY"/>
+        </root>
+    </springProfile>
+    
+    <springProfile name="!production">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>

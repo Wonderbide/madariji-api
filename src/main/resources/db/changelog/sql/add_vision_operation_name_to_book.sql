@@ -1,0 +1,1 @@
+ALTER TABLE book ADD COLUMN IF NOT EXISTS vision_operation_name VARCHAR(255);

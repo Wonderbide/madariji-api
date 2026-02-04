@@ -1,0 +1,38 @@
+# Ignore build artifacts
+target/
+*.jar
+*.war
+
+# Ignore local directories
+local/
+uploads/
+final-results/
+covers/
+
+# Ignore IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# Ignore test files
+src/test/
+test-report-*.json
+
+# Ignore documentation
+*.md
+!README.md
+
+# Ignore scripts that are only for local use
+start.sh
+export-doppler-env.sh
+scripts/
+
+# Ignore git
+.git/
+.gitignore
+
+# Ignore env files
+.env
+.env.*
