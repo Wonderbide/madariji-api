@@ -24,10 +24,12 @@ ALTER TABLE llm_models
   DROP COLUMN IF EXISTS is_available,
   DROP COLUMN IF EXISTS performance_tier,
   DROP COLUMN IF EXISTS temperature_override,
-  DROP COLUMN IF EXISTS max_tokens_override,
-  ALTER COLUMN model_id RENAME TO model_code,
-  ALTER COLUMN default_temperature RENAME TO temperature,
-  ALTER COLUMN max_output_tokens RENAME TO max_tokens;
+  DROP COLUMN IF EXISTS max_tokens_override;
+
+-- Rename columns (must be separate statements in PostgreSQL)
+ALTER TABLE llm_models RENAME COLUMN model_id TO model_code;
+ALTER TABLE llm_models RENAME COLUMN default_temperature TO temperature;
+ALTER TABLE llm_models RENAME COLUMN max_output_tokens TO max_tokens;
 
 -- Add missing configuration columns if they don't exist
 ALTER TABLE llm_models
@@ -38,8 +40,10 @@ ALTER TABLE llm_models
   ALTER COLUMN temperature SET DEFAULT 0.05;
 
 -- PHASE 4: Transform ai_workflow_config
+-- Rename column first (must be separate statement)
+ALTER TABLE ai_workflow_config RENAME COLUMN flow_type TO workflow_type;
+
 ALTER TABLE ai_workflow_config
-  RENAME COLUMN flow_type TO workflow_type,
   DROP COLUMN IF EXISTS provider,
   DROP COLUMN IF EXISTS model_id,
   DROP COLUMN IF EXISTS priority,
@@ -47,10 +51,6 @@ ALTER TABLE ai_workflow_config
   ADD COLUMN IF NOT EXISTS model_id UUID,
   ADD COLUMN IF NOT EXISTS description TEXT,
   ADD COLUMN IF NOT EXISTS configured_by VARCHAR(255);
-
--- Rename is_active for consistency
-ALTER TABLE ai_workflow_config
-  RENAME COLUMN is_active TO is_active;
 
 -- PHASE 5: Add foreign key constraints
 ALTER TABLE ai_workflow_config
