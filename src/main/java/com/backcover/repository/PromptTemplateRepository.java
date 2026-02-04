@@ -47,6 +47,12 @@ public interface PromptTemplateRepository extends JpaRepository<PromptTemplate, 
      * Count active prompt templates
      */
     long countByIsActiveTrue();
+
+    /**
+     * Check if an active prompt exists by promptKey
+     */
+    @Query("SELECT COUNT(p) > 0 FROM PromptTemplate p WHERE p.promptKey = :promptKey AND p.isActive = true")
+    boolean existsByPromptKeyAndIsActiveTrue(@Param("promptKey") String promptKey);
     
     /**
      * Find first active prompt template by identifier prefix (maps to promptKey)
