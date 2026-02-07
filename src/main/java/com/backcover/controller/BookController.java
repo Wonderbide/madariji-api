@@ -314,7 +314,7 @@ public class BookController {
     }
 
     @PostMapping("/upload")
-    @PreAuthorize("hasAnyRole('PREMIUM', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('PRO', 'ADMIN')")
     public ResponseEntity<String> uploadBook(
             @RequestParam("file") MultipartFile file,
             @RequestParam(name = "visibility", defaultValue = "PRIVATE") String visibilityString,
